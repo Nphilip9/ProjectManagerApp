@@ -3,16 +3,22 @@ package com.nphilip.projectmanagerapp.client;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Looper;
-import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.nphilip.projectmanagerapp.MainActivity;
+import com.nphilip.projectmanagerapp.model.ProjectItem;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.lang.reflect.Type;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Client {
-    private static final String SERVER_IP = "192.168.1.101";
+    private static final String SERVER_IP = "192.168.120.204";
     private static final int SERVER_PORT = 1080;
 
     private Socket socket;
@@ -88,6 +94,16 @@ public class Client {
     }
 
     private void handleIncomingMessage(String message) {
-
+        if (message.startsWith("ITEMS")) {
+            ArrayList<ProjectItem> projectItems;
+            Type listType = new TypeToken<ArrayList<ProjectItem>>() {}.getType();
+            projectItems = new Gson().fromJson(message.replace("ITEMS",""), listType);
+            ((MainActivity) context).runOnUiThread(() -> {
+                MainActivity mainActivity = (MainActivity) context;
+                for (ProjectItem projectItem : projectItems) {
+                    mainActivity.addProjectItem(projectItem);
+                }
+            });
+        }
     }
 }

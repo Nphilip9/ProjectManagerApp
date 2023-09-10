@@ -4,16 +4,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Bundle;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.nphilip.projectmanagerapp.adapter.ProjectItemsListAdapter;
 import com.nphilip.projectmanagerapp.client.Client;
+import com.nphilip.projectmanagerapp.manager.JSONDataManager;
+import com.nphilip.projectmanagerapp.manager.RequestType;
+import com.nphilip.projectmanagerapp.model.ProjectItem;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     SwipeRefreshLayout activityMain_swipeRefreshLayout_refresh;
     ListView activityMain_listView_projectItems;
+
+    ArrayList<ProjectItem> projectItems = new ArrayList<>();
+    ProjectItemsListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +33,16 @@ public class MainActivity extends AppCompatActivity {
         activityMain_swipeRefreshLayout_refresh = findViewById(R.id.activityMain_swipeRefreshLayout_refresh);
         activityMain_listView_projectItems = findViewById(R.id.activityMain_listView_projectItems);
 
-        ProjectItemsListAdapter adapter = new ProjectItemsListAdapter(this, new String[]{"Text", "Text", "Text"});
+        adapter = new ProjectItemsListAdapter(this, projectItems);
         activityMain_listView_projectItems.setAdapter(adapter);
+
+        activityMain_swipeRefreshLayout_refresh.setOnRefreshListener(() -> {
+            new JSONDataManager(this).createRequest(RequestType.REQUEST_ITEMS_JSON_DATA);
+        });
+    }
+
+    public void addProjectItem(ProjectItem item) {
+        projectItems.add(item);
+        adapter.notifyDataSetChanged();
     }
 }
