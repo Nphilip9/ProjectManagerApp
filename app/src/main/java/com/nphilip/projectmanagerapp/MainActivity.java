@@ -8,6 +8,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.nphilip.projectmanagerapp.adapter.ProjectItemsListAdapter;
+import com.nphilip.projectmanagerapp.client.Client;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,6 +19,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Client client = new Client(this);
+        client.connectToServer();
 
         activityMain_swipeRefreshLayout_refresh = findViewById(R.id.activityMain_swipeRefreshLayout_refresh);
         activityMain_listView_projectItems = findViewById(R.id.activityMain_listView_projectItems);
