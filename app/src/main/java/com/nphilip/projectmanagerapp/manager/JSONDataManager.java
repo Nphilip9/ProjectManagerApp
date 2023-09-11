@@ -5,9 +5,7 @@ import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.nphilip.projectmanagerapp.client.Client;
 import com.nphilip.projectmanagerapp.model.ProjectItem;
-import com.nphilip.projectmanagerapp.model.RequestType;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -26,9 +24,26 @@ public class JSONDataManager {
         sharedPreferncesEditor = sharedPreferences.edit();
     }
 
-    public ArrayList<String> loadItemsFromSharedPrefernces() {
-        Type listType = new TypeToken<List<ProjectItem>>() {}.getType();
-        return new Gson().fromJson(sharedPreferences.getString("Items", "{}"), listType);
+    public void appendItemToSharedPreferences(ProjectItem projectItem) {
+        ArrayList<ProjectItem> items = loadItemsFromSharedPreferences();
+        items.add(projectItem);
+        sharedPreferncesEditor.putString("Items", new Gson().toJson(items));
+    }
+
+    public void deleteItemFromSharedPreferences(ProjectItem projectItem) {
+        ArrayList<ProjectItem> items = loadItemsFromSharedPreferences();
+        items.remove(projectItem);
+        sharedPreferncesEditor.putString("Items", new Gson().toJson(items));
+    }
+
+    public String loadJSONStringFromSharedPreferences() {
+        return sharedPreferences.getString("Items", "{}");
+    }
+
+    public ArrayList<ProjectItem> loadItemsFromSharedPreferences() {
+        Type listType = new TypeToken<List<ProjectItem>>() {
+        }.getType();
+        return new Gson().fromJson(loadJSONStringFromSharedPreferences(), listType);
     }
 }
 
