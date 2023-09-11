@@ -1,36 +1,34 @@
 package com.nphilip.projectmanagerapp.manager;
 
 import android.content.Context;
-import android.widget.MultiAutoCompleteTextView;
+import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nphilip.projectmanagerapp.client.Client;
 import com.nphilip.projectmanagerapp.model.ProjectItem;
+import com.nphilip.projectmanagerapp.model.RequestType;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JSONDataManager {
 
     Context context;
 
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor sharedPreferncesEditor;
+
     public JSONDataManager(Context context) {
         this.context = context;
+        sharedPreferences = context.getSharedPreferences("ItemsSharedPreferences", Context.MODE_PRIVATE);
+        sharedPreferncesEditor = sharedPreferences.edit();
     }
 
-    public void createRequest(String requestType) {
-        new Client(context).sendMessage(requestType);
-    }
-
-    public void createRequest(String requestType, ProjectItem projectItem) {
-        new Client(context).sendMessage(requestType + new Gson().toJson(projectItem));
-    }
-
-    public void handleIncomingRequests(String request) {
-        if (request.startsWith(RequestType.REQUEST_NEW_ITEM_CREATION)) {
-
-        } else if (request.startsWith(RequestType.REQUEST_ITEM_DELETION)) {
-
-        } else if (request.startsWith(RequestType.REQUEST_ITEMS_JSON_DATA)) {
-
-        }
+    public ArrayList<String> loadItemsFromSharedPrefernces() {
+        Type listType = new TypeToken<List<ProjectItem>>() {}.getType();
+        return new Gson().fromJson(sharedPreferences.getString("Items", "{}"), listType);
     }
 }
 

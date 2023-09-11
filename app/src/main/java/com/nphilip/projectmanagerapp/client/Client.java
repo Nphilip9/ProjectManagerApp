@@ -18,7 +18,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class Client {
-    private static final String SERVER_IP = "192.168.120.204";
+    private static final String SERVER_IP = "192.168.2.204";
     private static final int SERVER_PORT = 1080;
 
     private Socket socket;

@@ -9,7 +9,6 @@ import android.widget.ListView;
 import com.nphilip.projectmanagerapp.adapter.ProjectItemsListAdapter;
 import com.nphilip.projectmanagerapp.client.Client;
 import com.nphilip.projectmanagerapp.manager.JSONDataManager;
-import com.nphilip.projectmanagerapp.manager.RequestType;
 import com.nphilip.projectmanagerapp.model.ProjectItem;
 
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         activityMain_listView_projectItems.setAdapter(adapter);
 
         activityMain_swipeRefreshLayout_refresh.setOnRefreshListener(() -> {
-            new JSONDataManager(this).createRequest(RequestType.REQUEST_ITEMS_JSON_DATA);
+            new JSONDataManager(this).createRequest("GET_JSON_DATA");
         });
     }
 
