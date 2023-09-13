@@ -30,7 +30,6 @@ public class ProjectItemsListAdapter extends ArrayAdapter<String> {
     @Override
     public int getCount() {
         return projectItems.size();
-
     }
 
     @Override

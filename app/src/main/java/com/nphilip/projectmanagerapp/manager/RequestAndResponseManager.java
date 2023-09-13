@@ -3,9 +3,15 @@ package com.nphilip.projectmanagerapp.manager;
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.nphilip.projectmanagerapp.MainActivity;
 import com.nphilip.projectmanagerapp.client.Client;
 import com.nphilip.projectmanagerapp.model.ProjectItem;
 import com.nphilip.projectmanagerapp.model.RequestType;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RequestAndResponseManager {
     Context context;
@@ -14,8 +20,12 @@ public class RequestAndResponseManager {
         this.context = context;
     }
 
-    public void createRequest(String requestType) {
-        new Client(context).sendMessage(requestType);
+    public void createRequest(String request) {
+        new Client(context).sendMessage(request);
+    }
+
+    public void createRequest(RequestType requestType) {
+        new Client(context).sendMessage(requestType.toString());
     }
 
     public void createRequest(String requestType, ProjectItem projectItem) {
@@ -26,19 +36,20 @@ public class RequestAndResponseManager {
         JSONDataManager jsonDataManager = new JSONDataManager(context);
         Client client = new Client(context);
         if (request.startsWith(RequestType.GET_JSON_DATA.toString())) {
-            client.sendMessage(jsonDataManager.loadJSONStringFromSharedPreferences());
+            Type listType = new TypeToken<List<ProjectItem>>() {}.getType();
+            System.out.println("Here:" + request.replace(RequestType.GET_JSON_DATA.toString(), ""));
+            ArrayList<ProjectItem> items = new Gson().fromJson(request.replace(RequestType.GET_JSON_DATA.toString(), ""), listType);
+            for (ProjectItem item : items) {
+                new JSONDataManager(context).appendItemToSharedPreferences(item);
+            }
+
         } else if (request.startsWith(RequestType.NEW_ITEM_CREATION.toString())) {
             request = request.replace(RequestType.NEW_ITEM_CREATION.toString(), "");
             jsonDataManager.appendItemToSharedPreferences(new Gson().fromJson(request, ProjectItem.class));
+            //MainActivity.addProjectItem();
         } else if (request.startsWith(RequestType.ITEM_DELETION.toString())) {
             request = request.replace(RequestType.ITEM_DELETION.toString(), "");
             jsonDataManager.deleteItemFromSharedPreferences(new Gson().fromJson(request, ProjectItem.class));
         }
     }
-
-    public void createRequest() {
-
-    }
-
-    // TODO: ADD REQUEST QUEUE
 }
