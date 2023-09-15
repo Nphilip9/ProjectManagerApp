@@ -3,6 +3,7 @@ package com.nphilip.projectmanagerapp;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.widget.ListView;
 
@@ -13,21 +14,25 @@ import com.nphilip.projectmanagerapp.manager.RequestAndResponseManager;
 import com.nphilip.projectmanagerapp.model.ProjectItem;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 public class MainActivity extends AppCompatActivity {
 
     SwipeRefreshLayout activityMain_swipeRefreshLayout_refresh;
-    ListView activityMain_listView_projectItems;
+    static ListView activityMain_listView_projectItems;
 
     Client client;
 
     ArrayList<ProjectItem> projectItems = new ArrayList<>();
-    static ProjectItemsListAdapter adapter;
+    public static ProjectItemsListAdapter adapter;
+    public static MainActivity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        activity = this;
 
         client = new Client(this);
         client.connectToServer();
@@ -35,13 +40,15 @@ public class MainActivity extends AppCompatActivity {
         activityMain_swipeRefreshLayout_refresh = findViewById(R.id.activityMain_swipeRefreshLayout_refresh);
         activityMain_listView_projectItems = findViewById(R.id.activityMain_listView_projectItems);
 
-        adapter = new ProjectItemsListAdapter(this, projectItems);
-        activityMain_listView_projectItems.setAdapter(adapter);
-
+        init(this);
     }
 
-    public static void addProjectItem(ProjectItem item) {
-        // projectItems.add(item);
-        adapter.notifyDataSetChanged();
+    public static void init(Context context) {
+        adapter = new ProjectItemsListAdapter(getActivity(), new JSONDataManager(getActivity().getApplicationContext()).loadItemsFromSharedPreferences());
+        activityMain_listView_projectItems.setAdapter(adapter);
+    }
+
+    public static MainActivity getActivity() {
+        return activity;
     }
 }

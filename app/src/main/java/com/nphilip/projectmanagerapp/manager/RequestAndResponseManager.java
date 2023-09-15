@@ -34,22 +34,15 @@ public class RequestAndResponseManager {
 
     public void handleIncomingRequests(String request) {
         JSONDataManager jsonDataManager = new JSONDataManager(context);
-        Client client = new Client(context);
         if (request.startsWith(RequestType.GET_JSON_DATA.toString())) {
-            Type listType = new TypeToken<List<ProjectItem>>() {}.getType();
-            System.out.println("Here:" + request.replace(RequestType.GET_JSON_DATA.toString(), ""));
-            ArrayList<ProjectItem> items = new Gson().fromJson(request.replace(RequestType.GET_JSON_DATA.toString(), ""), listType);
-            for (ProjectItem item : items) {
-                new JSONDataManager(context).appendItemToSharedPreferences(item);
-            }
-
+            request = request.replace(RequestType.GET_JSON_DATA.toString(), "");
+            jsonDataManager.appendItemsToSharedPreferences(jsonDataManager.toProjectItems(request));
         } else if (request.startsWith(RequestType.NEW_ITEM_CREATION.toString())) {
             request = request.replace(RequestType.NEW_ITEM_CREATION.toString(), "");
-            jsonDataManager.appendItemToSharedPreferences(new Gson().fromJson(request, ProjectItem.class));
-            //MainActivity.addProjectItem();
+            jsonDataManager.appendItemToSharedPreferences(jsonDataManager.toProjectItem(request));
         } else if (request.startsWith(RequestType.ITEM_DELETION.toString())) {
             request = request.replace(RequestType.ITEM_DELETION.toString(), "");
-            jsonDataManager.deleteItemFromSharedPreferences(new Gson().fromJson(request, ProjectItem.class));
+            jsonDataManager.deleteItemFromSharedPreferences(jsonDataManager.toProjectItem(request));
         }
     }
 }
