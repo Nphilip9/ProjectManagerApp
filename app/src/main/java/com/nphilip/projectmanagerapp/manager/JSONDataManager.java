@@ -41,7 +41,7 @@ public class JSONDataManager {
         items.add(projectItem);
         sharedPreferencesEditor.putString(ITEMS_KEY, new Gson().toJson(items));
         sharedPreferencesEditor.apply();
-        MainActivity.getActivity().runOnUiThread(() -> MainActivity.init(context));
+        MainActivity.getActivity().runOnUiThread(MainActivity::init);
     }
 
     public void appendItemsToSharedPreferences(ArrayList<ProjectItem> newItems) {
@@ -49,6 +49,7 @@ public class JSONDataManager {
         items.addAll(newItems);
         sharedPreferencesEditor.putString(ITEMS_KEY, new Gson().toJson(items));
         sharedPreferencesEditor.apply();
+        MainActivity.getActivity().runOnUiThread(MainActivity::init);
     }
 
     public ProjectItem toProjectItem(String gsonString) {
@@ -65,6 +66,7 @@ public class JSONDataManager {
         items.remove(projectItem);
         sharedPreferencesEditor.putString(ITEMS_KEY, new Gson().toJson(items));
         sharedPreferencesEditor.apply();
+        MainActivity.getActivity().runOnUiThread(MainActivity::init);
     }
 
     public String loadJSONStringFromSharedPreferences() {
